@@ -4,7 +4,10 @@ using System.Text;
 
 namespace ConsoleProject.Infrustructure.Models
 {
-    class SaleItem
+    public class SaleItem
     {
+        public int ItemNumber { get; set; }
+        public Product Product { get; set; }
+        public int ItemCount { get; set; }
     }
 }
