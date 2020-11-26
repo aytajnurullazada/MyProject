@@ -12,14 +12,29 @@ namespace ConsoleProject.Infrustructure.Services
 {
     public class MarketableService : IMarketable
     {
-        private readonly List<Sales> _sales;
-        public List<Sales> Sales => _sales;
+        #region Sales
+            public List<Sales> _sales = new List<Sales>{
+                new Sales
+                {
+                    SaleAmount = 23.4,
+                    SaleDate = new DateTime(2020,09,09),
+                    SaleNumber = 5,
+                   
+                    
+                }
+            };
+        #endregion
+        #region Sale item
+        public List<SaleItem> _saleItem =  new List<SaleItem>{
+        new SaleItem
+        {       ItemCount = 3,
+                ItemNumber=6,
+                
 
-
-
-        //private readonly List<Product> _product;
-
-
+        }
+        };
+        #endregion
+        #region Product
         public List<Product> _product = new List<Product>
         {
             new Product
@@ -45,19 +60,20 @@ namespace ConsoleProject.Infrustructure.Services
         }
 
     };
+        #endregion
         
-            
-
         public List<Product> Product => _product;
+        public List<Sales> Sales => _sales;
 
         public void AddSale(Sales sale)
         {
             _sales.Add(sale);
         }
 
+
         public void RemoveProductBySale(string Name, int Count)
         {
-            throw new NotImplementedException();
+            
         }
 
         public void GetTotalSale()
@@ -68,7 +84,7 @@ namespace ConsoleProject.Infrustructure.Services
 
         public void GetSaleByAmountRange(double FirstAmount, double LastAmount)
         {
-            throw new NotImplementedException();
+            
         }
 
         public void GetSaleByNumber(int Number)
@@ -81,31 +97,30 @@ namespace ConsoleProject.Infrustructure.Services
             _product.Add(product);
         }
 
-        public void ChangeProduct(String Code)
+        public List<Product> ChangeProduct(String Code)
         {
-            _product.FindAll(p => p.ProductCode == Code).Where(p => p.ProductName == Console.ReadLine()); 
-            
+        
+            return _product.FindAll(p => p.ProductCode == Code).ToList();
            
         }
 
-        public void SearchProductByName(string Text)
+        public string SearchProductByName(string Text)
         {
-
-            List<Product> Products = Product.FindAll(p => p.ProductName.Contains(Text));
-
-                foreach (var item in Products)
-                {
-                    Console.WriteLine(item.ProductName);
-                    Console.WriteLine(item.ProductCode);
-                    Console.WriteLine(item.ProductCount);
-                    Console.WriteLine(item.ProductPrice);             
-                }
+            return _product.FindAll(p => p.ProductName.Contains(Text)).ToString();
+               foreach(var item in _product)
+            {
+                Console.WriteLine(item.ProductCode);
+                Console.WriteLine(item.ProductCount);
+                Console.WriteLine(item.ProductName);
+                Console.WriteLine(item.ProductPrice);
+            }
            
             }
 
         List<Sales> IMarketable.GetSaleByDateRange(DateTime StartDate, DateTime EndDate)
         {
             return _sales.Where(s => s.SaleDate >= StartDate && s.SaleDate <= EndDate).ToList();
+           
         }
 
         public List<Product> GetProductByAmountRange(double MinAmount, double MaxAmount)
@@ -126,12 +141,23 @@ namespace ConsoleProject.Infrustructure.Services
             }
         }
 
+        
+        List<Sales> IMarketable.GetSaleByAmountRange(double FirstAmount, double LastAmount)
+        {
+            throw new NotImplementedException();
+        }
+
         public List<Sales> GetSaleByDate(DateTime Date)
         {
             throw new NotImplementedException();
         }
 
-        
+      public void RemoveProduct(string code)
+        {
+            List<Product> products = _product.ToList();
+           var res= products.Find(p => p.ProductCode == code);
+         _product.Remove(res);
+        }
     }    
     }
 

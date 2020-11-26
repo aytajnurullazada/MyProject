@@ -6,18 +6,12 @@ namespace ConsoleProject.Infrustructure.Enums
 {
     public enum Category
     {
-        OlisAndFats,
-        OrganicFoods,
-        Forestry,
-        AlcoholicBeverages,
-        HotDrinks,
-        EnergyDrinks,
-        BakedGood,
-        DairyProducts,
-        CannedFoods,
-        Snacks,
-        Spices,
-        Meat
-
+        Ichkiler,
+        Meyveler,
+        Yaglar,
+        UnMehsullari,
+        Terevezler,
+        Shokoladlar
     }
+    
 }

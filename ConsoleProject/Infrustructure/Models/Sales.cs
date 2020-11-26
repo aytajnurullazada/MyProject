@@ -10,5 +10,6 @@ namespace ConsoleProject.Infrustructure.Models
         public Double SaleAmount { get; set; }
         public List<SaleItem> Saleİtems { get; set; }
         public DateTime SaleDate { get; set; }
+        
     }
 }
