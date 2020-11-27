@@ -8,7 +8,7 @@ namespace ConsoleProject.Infrustructure.Models
     {
         public int SaleNumber { get; set; }
         public Double SaleAmount { get; set; }
-        public List<SaleItem> Saleİtems { get; set; }
+        public List<SaleItem> SaleItems { get; set; }
         public DateTime SaleDate { get; set; }
         
     }

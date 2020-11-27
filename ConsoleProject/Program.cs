@@ -90,13 +90,13 @@ namespace ConsoleProject
                         RemoveProduct();
                         break;
                     case 4:
-                        Console.WriteLine("1");
+                        ShowProduct();
                         break;
                     case 5:
                         Console.WriteLine("1");
                         break;
                     case 6:
-                        Console.WriteLine("1");
+                        GetProductByAmountRange();
                         break;
                     case 7:
                         SearchProductByName();
@@ -104,7 +104,6 @@ namespace ConsoleProject
                 }
             } while (selectInt != 0);
         }
-
         static void SaleOperation()
         {
             int selectInt;
@@ -132,7 +131,7 @@ namespace ConsoleProject
                     case 0:
                         continue;
                     case 1:
-                        Console.WriteLine("1");
+                        AddSale();
                         break;
                     case 2:
                         Console.WriteLine("2");
@@ -141,25 +140,30 @@ namespace ConsoleProject
                         Console.WriteLine("3");
                         break;
                     case 4:
-                        Console.WriteLine("4");
+                        ShowSale();
                         break;
                     case 5:
-                        Console.WriteLine("5");
+                        GetSaleByDateRange();
                         break;
                     case 6:
-                        Console.WriteLine("6");
+                        GetSaleByAmountRange();
                         break;
                     case 7:
-                        Console.WriteLine("7");
+                        GetSaleByDate();
                         break;
-
+                    case 8:
+                        GetSaleByNumber();
+                        break;
 
                 }
 
 
             } while (selectInt != 0);
         }
+
         #region show methods
+
+        #region Product's Methods
         static void AddProduct()
         {
             Console.WriteLine("Yeni satish daxil edin");
@@ -245,7 +249,7 @@ namespace ConsoleProject
         {
            Console.Write("Axtarish etmek istediyiniz mehsulun adini qeyd edin: ");
            string Text =  Console.ReadLine();
-           string result = marketableService.SearchProductByName(Text);  
+           List <Product> result = marketableService.SearchProductByName(Text);  
         }
         static void ChangeProduct()
         {
@@ -318,8 +322,79 @@ namespace ConsoleProject
                 marketableService.RemoveProduct(text);
             
         }
-        
-        
+        static void GetProductByAmountRange()
+        {
+            Console.WriteLine("Min mebleq daxil edin");
+            double minAmount = Convert.ToDouble(Console.ReadLine());
+            Console.WriteLine("Max mebleq daxil edin");
+            double maxAmount = Convert.ToDouble(Console.ReadLine());
+
+            List<Product> result = marketableService.GetProductByAmountRange(minAmount, maxAmount);
+            Console.WriteLine(result);
+
+        }
+        static void ShowProduct()
+        {
+            marketableService.ShowProduct();
+        }
         #endregion
+
+        #region Sale's Methods
+
+        static void AddSale()
+        {
+            Console.WriteLine("Mehsulun kodunu daxil edin");
+            string Code = Console.ReadLine();
+            Console.WriteLine("Mehsulun sayini qeyd edin");
+            int Count = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Mehsulun nomresini qeyd edin");
+            int number = Convert.ToInt32(Console.ReadLine());
+            marketableService.AddSale(Code, Count, number);
+            
+        }
+        static void ShowSale()
+        {
+            marketableService.GetTotalSale();
+
+        }
+        static void GetSaleByDateRange()
+        {
+            Console.WriteLine("Bashlangic tarixi qeyd edin");
+            DateTime StartDate = Convert.ToDateTime( Console.ReadLine());
+            Console.WriteLine("Bitish tarixini qeyd edin");
+            DateTime EndDate = Convert.ToDateTime(Console.ReadLine());
+
+        List <Sales> result =  marketableService.GetSaleByDateRange(StartDate, EndDate);
+            Console.WriteLine(result);
+
+        }
+        static void GetSaleByAmountRange()
+        {
+            Console.WriteLine("1-ci meblegi sechin");
+            double FirstAmount = Convert.ToDouble(Console.ReadLine());
+            Console.WriteLine("2-ci meblegi sechin");
+            double LastAmount = Convert.ToDouble(Console.ReadLine());
+            List  <Sales> result = marketableService.GetSaleByAmountRange(FirstAmount, LastAmount);
+            Console.WriteLine(result);
+
+        }
+        static void GetSaleByDate()
+        {
+            Console.WriteLine("Tarix qeyd edin");
+            DateTime date = Convert.ToDateTime(Console.ReadLine());
+            List<Sales> result = marketableService.GetSaleByDate(date);
+            Console.WriteLine(result);
+
+        }
+        static void GetSaleByNumber()
+        {
+            Console.WriteLine("Nomre daxil edin");
+            int Number = Convert.ToInt32(Console.ReadLine());
+            List<Sales> result = marketableService.GetSaleByNumber(Number);
+            Console.WriteLine(result);
+        }
+        #endregion
+        #endregion
+
     }
 }
