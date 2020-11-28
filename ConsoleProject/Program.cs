@@ -4,6 +4,7 @@ using ConsoleProject.Infrustructure.Services;
 using System.Collections.Generic;
 using ConsoleProject.Infrustructure.Models;
 using ConsoleProject.Infrustructure.Enums;
+using ConsoleTables;
 
 namespace ConsoleProject
 {
@@ -13,9 +14,6 @@ namespace ConsoleProject
         static void Main(string[] args)
 
         {
-
-
-
             Console.OutputEncoding = Encoding.UTF8;
             int selectInt;
             do
@@ -93,7 +91,7 @@ namespace ConsoleProject
                         ShowProduct();
                         break;
                     case 5:
-                        Console.WriteLine("1");
+                        GetProductByCategory();
                         break;
                     case 6:
                         GetProductByAmountRange();
@@ -248,8 +246,18 @@ namespace ConsoleProject
         static void SearchProductByName()
         {
            Console.Write("Axtarish etmek istediyiniz mehsulun adini qeyd edin: ");
-           string Text =  Console.ReadLine();
-           List <Product> result = marketableService.SearchProductByName(Text);  
+           string Text =  Console.ReadLine();          
+           var list = marketableService.SearchProductByName(Text);
+
+            var table = new ConsoleTable("Mehsul", "Mehsulun adi", "Mehsulun Kodu", "Mehsulun sayi", "Mehsulun qiymeti", "Mehsulun Kateqoriyasi");
+            int i = 1;
+            foreach (var item in list)
+            {
+                _ = table.AddRow(i, item.ProductName, item.ProductCode, item.ProductCount, item.ProductPrice, item.Category);
+                i++;
+            }
+
+            table.Write();
         }
         static void ChangeProduct()
         {
@@ -328,15 +336,89 @@ namespace ConsoleProject
             double minAmount = Convert.ToDouble(Console.ReadLine());
             Console.WriteLine("Max mebleq daxil edin");
             double maxAmount = Convert.ToDouble(Console.ReadLine());
+            var list = marketableService.GetProductByAmountRange(minAmount, maxAmount);
+            
+            var table = new ConsoleTable("Mehsul", "Mehsulun adi", "Mehsulun Kodu", "Mehsulun sayi", "Mehsulun qiymeti", "Mehsulun Kateqoriyasi");
+            int i = 1;
+            foreach (var item in list)
+            {
+                _ = table.AddRow(i, item.ProductName, item.ProductCode, item.ProductCount, item.ProductPrice, item.Category);
+                i++;
+            }
 
-            List<Product> result = marketableService.GetProductByAmountRange(minAmount, maxAmount);
-            Console.WriteLine(result);
+            table.Write();
 
         }
         static void ShowProduct()
         {
-            marketableService.ShowProduct();
+            var table = new ConsoleTable("Mehsul", "Mehsulun adi", "Mehsulun Kodu", "Mehsulun sayi", "Mehsulun qiymeti", "Mehsulun Kateqoriyasi");
+            int i = 1;
+            foreach (var item in marketableService.Product)
+            {
+                 table.AddRow(i, item.ProductName, item.ProductCode, item.ProductCount, item.ProductPrice, item.Category);
+                i++;
+            }
+
+            table.Write();
         }
+        static void GetProductByCategory()
+        {
+            
+            Console.WriteLine("1 - Ichkiler");
+            Console.WriteLine("2 - Meyveler");
+            Console.WriteLine("3 - Yaglar");
+            Console.WriteLine("4 - UnMehsullari");
+            Console.WriteLine("5 - Terevezler");
+            Console.WriteLine("6 - Shokoladlar");
+
+            Console.WriteLine("Seçimek istediyiniz kategoriyanin nomresini qeyd edin");
+            string select = Console.ReadLine();
+            int selectInt;
+            Product product = new Product();
+            
+            while (!int.TryParse(select, out selectInt))
+            {
+                Console.WriteLine("Rəqəm daxil etməlisiniz!");
+                select = Console.ReadLine();
+            }
+            switch (selectInt)
+            {
+                case 1:
+                    product.Category = Category.Ichkiler;
+                break;
+                case 2:
+                    product.Category = Category.Meyveler;
+                    break;
+                case 3:
+                    product.Category = Category.Yaglar;
+                    break;
+                case 4:
+                    product.Category = Category.UnMehsullari;
+                    break;
+                case 5:
+                    product.Category = Category.Terevezler;
+                    break;
+                case 6:
+                    product.Category = Category.Shokoladlar;
+                    break;
+                default:
+                    Console.WriteLine("Sehv reqem daxil elemisiz tezden edin");
+                    AddProduct();
+                    break;
+            }
+            var list = marketableService.GetProductByCategory(product.Category);
+            var table = new ConsoleTable("Mehsul", "Mehsulun adi", "Mehsulun Kodu", "Mehsulun sayi", "Mehsulun qiymeti", "Mehsulun Kateqoriyasi");
+            int i = 1;
+            foreach (var item in list)
+            {
+                _ = table.AddRow(i, item.ProductName, item.ProductCode, item.ProductCount, item.ProductPrice, item.Category);
+                i++;
+            }
+
+            table.Write();
+            
+            
+        } 
         #endregion
 
         #region Sale's Methods
@@ -355,6 +437,15 @@ namespace ConsoleProject
         static void ShowSale()
         {
             marketableService.GetTotalSale();
+            var table = new ConsoleTable("Satish" , "Satish Meblegi", "Satish Tarixi", "Satish sayi", "Satish Nomresi" );
+            int i = 1;
+            foreach (var item in marketableService.Sales)
+            {
+                _ = table.AddRow(i, item.SaleAmount, item.SaleDate.ToString("dd.MM.yyyy"), item.SaleItems.Count, item.SaleNumber);
+                i++;
+            }
+
+            table.Write();
 
         }
         static void GetSaleByDateRange()
@@ -363,10 +454,16 @@ namespace ConsoleProject
             DateTime StartDate = Convert.ToDateTime( Console.ReadLine());
             Console.WriteLine("Bitish tarixini qeyd edin");
             DateTime EndDate = Convert.ToDateTime(Console.ReadLine());
+            var table = new ConsoleTable("Satish", "Satish Meblegi", "Satish Tarixi", "Satish sayi", "Satish Nomresi");
+            int i = 1;
+            var list = marketableService.GetSaleByDateRange(StartDate, EndDate);
+            foreach (var item in list)
+            {
+                table.AddRow(i, item.SaleAmount, item.SaleDate.ToString("dd.MM.yyyy"), item.SaleItems.Count, item.SaleNumber);
+                i++;
+            }
 
-        List <Sales> result =  marketableService.GetSaleByDateRange(StartDate, EndDate);
-            Console.WriteLine(result);
-
+            table.Write();          
         }
         static void GetSaleByAmountRange()
         {
@@ -374,26 +471,52 @@ namespace ConsoleProject
             double FirstAmount = Convert.ToDouble(Console.ReadLine());
             Console.WriteLine("2-ci meblegi sechin");
             double LastAmount = Convert.ToDouble(Console.ReadLine());
-            List  <Sales> result = marketableService.GetSaleByAmountRange(FirstAmount, LastAmount);
-            Console.WriteLine(result);
+            var table = new ConsoleTable("Satish", "Satish Meblegi", "Satish Tarixi", "Satish sayi", "Satish Nomresi");
+            int i = 1;
+            var list = marketableService.GetSaleByAmountRange(FirstAmount, LastAmount);
+            foreach (var item in list)
+            {
+                _ = table.AddRow(i, item.SaleAmount, item.SaleDate.ToString("dd.MM.yyyy"), item.SaleItems.Count, item.SaleNumber);
+                i++;
+            }
 
+            table.Write();
+            
         }
         static void GetSaleByDate()
         {
             Console.WriteLine("Tarix qeyd edin");
             DateTime date = Convert.ToDateTime(Console.ReadLine());
             List<Sales> result = marketableService.GetSaleByDate(date);
-            Console.WriteLine(result);
-
+            var table = new ConsoleTable("Satish", "Satish Meblegi", "Satish Tarixi", "Satish sayi", "Satish Nomresi");
+            int i = 1;
+            var list = marketableService.GetSaleByDate(date);
+            foreach (var item in list)
+            {
+                _ = table.AddRow(i, item.SaleAmount, item.SaleDate.ToString("dd.MM.yyyy"), item.SaleItems.Count, item.SaleNumber);
+                i++;
+            }
+            table.Write();
+            
         }
         static void GetSaleByNumber()
         {
             Console.WriteLine("Nomre daxil edin");
             int Number = Convert.ToInt32(Console.ReadLine());
             List<Sales> result = marketableService.GetSaleByNumber(Number);
-            Console.WriteLine(result);
+            var table = new ConsoleTable("Satish", "Satish Meblegi", "Satish Tarixi", "Satish sayi", "Satish Nomresi");
+            int i = 1;
+            var list = marketableService.GetSaleByNumber(Number);
+            foreach (var item in list)
+            {
+                _ = table.AddRow(i, item.SaleAmount, item.SaleDate.ToString("dd.MM.yyyy"), item.SaleItems.Count, item.SaleNumber);
+                i++;
+            }
+
+            table.Write();
         }
         #endregion
+
         #endregion
 
     }

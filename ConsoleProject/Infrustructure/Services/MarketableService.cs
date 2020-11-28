@@ -92,50 +92,27 @@ namespace ConsoleProject.Infrustructure.Services
             
         }
         public void GetTotalSale()
-        {
-            var list = _sales.ToList();
-
-            foreach (var item in list)
-            {
-                Console.WriteLine("{0},{1},{2}",item.SaleDate,item.SaleNumber,item.SaleItems.Count()); 
-            }
+        {        
         }
         public List<Sales> GetSaleByDateRange(DateTime StartDate, DateTime EndDate)
         {
             var list = _sales.Where(s => s.SaleDate >= StartDate && s.SaleDate <= EndDate).ToList();
-            foreach (var item in list)
-            {
-                Console.WriteLine("{0}, {1}, {2}, {3}", item.SaleAmount, item.SaleDate, item.SaleNumber, item.SaleItems.Count);
-
-            }
+            
             return list;
         }
         public List<Sales> GetSaleByNumber(int Number)
         {
-            var list = Sales.Where(s => s.SaleNumber == Number).ToList();
-            foreach (var item in list)
-            {
-                Console.WriteLine("{0}, {1}, {2}, {3}", item.SaleAmount, item.SaleDate, item.SaleNumber, item.SaleItems.Count);
-            }
+            var list = Sales.Where(s => s.SaleNumber == Number).ToList();           
             return list;
         }
         public List<Sales> GetSaleByAmountRange(double FirstAmount, double LastAmount)
         {
-            var list = Sales.Where(s => s.SaleAmount >= FirstAmount && s.SaleAmount <= LastAmount).ToList();
-            foreach (var item in list)
-            {
-                Console.WriteLine("{0}, {1}, {2}, {3}", item.SaleAmount, item.SaleDate, item.SaleNumber, item.SaleItems.Count);
-            }
+            var list = Sales.Where(s => s.SaleAmount >= FirstAmount && s.SaleAmount <= LastAmount).ToList();           
             return list;
         }
         public List<Sales> GetSaleByDate(DateTime Date)
         {
-            var list = _sales.Where(s => s.SaleDate == Date).ToList();
-            foreach (var item in list)
-            {
-                Console.WriteLine("{0}, {1}, {2}, {3}", item.SaleAmount, item.SaleDate, item.SaleNumber, item.SaleItems.Count);
-
-            }
+            var list = _sales.Where(s => s.SaleDate == Date).ToList();         
             return list;
         }
         #endregion
@@ -155,22 +132,14 @@ namespace ConsoleProject.Infrustructure.Services
 
         public List<Product> SearchProductByName(string Text)
         {
-            var list = _product.FindAll(p => p.ProductName.Contains(Text)).ToList();
-               foreach(var item in list)
-            {
-                Console.WriteLine("{0}, {1}, {2}, {3}, {4}", item.ProductCode, item.ProductCount, item.ProductName, item.ProductPrice, item.Category);
-            }
-            return list;
+            return  _product.FindAll(p => p.ProductName.Contains(Text)).ToList();
+
          }
 
         public List<Product> GetProductByAmountRange(double MinAmount, double MaxAmount)
         {
-            var list = _product.Where(p => p.ProductPrice >= MinAmount && p.ProductPrice <= MaxAmount).ToList();
-            foreach(var item in list)
-            {
-                Console.WriteLine("{0}, {1}, {2}, {3}, {4}", item.ProductCode, item.ProductCount, item.ProductName, item.ProductPrice, item.Category);
-            }
-            return list;
+            return _product.Where(p => p.ProductPrice >= MinAmount && p.ProductPrice <= MaxAmount).ToList();         
+
         }
 
         public void RemoveProduct(string code)
@@ -182,17 +151,13 @@ namespace ConsoleProject.Infrustructure.Services
 
         public void ShowProduct()
         {
-            var list = _product.ToList();
-
-            foreach (var item in list)
-            {
-                Console.WriteLine("{0},{1},{2},{3}", item.ProductCode, item.ProductCount, item.ProductName, item.ProductPrice);
-            }
+           var list = _product.ToList();
         }
 
-        List<Product> IMarketable.GetProductByCategory(Category CategoryNumber)
+        public List<Product> GetProductByCategory(Category CategoryNumber)
         {
-            throw new NotImplementedException();
+            return _product.Where(p => p.Category == CategoryNumber).ToList();
+            
         }
         #endregion
     }
