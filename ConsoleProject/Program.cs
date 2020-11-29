@@ -45,6 +45,9 @@ namespace ConsoleProject
                     case 2:
                         SaleOperation();
                         break;
+                    default:
+                        Console.WriteLine("Uygun reqem daxil edin");
+                        break;
 
                 }
                 #endregion
@@ -57,6 +60,7 @@ namespace ConsoleProject
             int selectInt;
             do
             {
+                #region Menu
                 Console.WriteLine("- 1 Yeni mehsul elave et");
                 Console.WriteLine("- 2 Mehsul uzerinde duzelish et");
                 Console.WriteLine("- 3 Mehsulu sil");
@@ -74,6 +78,8 @@ namespace ConsoleProject
                     Console.WriteLine("Rəqəm daxil etməlisiniz!");
                     select = Console.ReadLine();
                 }
+                #endregion
+                #region Menu Select
                 switch (selectInt)
                 {
                     case 0:
@@ -99,14 +105,20 @@ namespace ConsoleProject
                     case 7:
                         SearchProductByName();
                         break;
+                    default:
+                        Console.WriteLine("Uygun reqem daxil edin");
+                        break;
                 }
-            } while (selectInt != 0);
+                #endregion
+            }
+            while (selectInt != 0);
         }
         static void SaleOperation()
         {
             int selectInt;
             do
             {
+                #region Menu
                 Console.WriteLine("- 1 Yeni satis elave etmek");
                 Console.WriteLine("- 2 Satisdaki hansisa mehsulun geri qaytarilmasi");
                 Console.WriteLine("- 3 Satisin silinmesi");
@@ -124,6 +136,8 @@ namespace ConsoleProject
                     Console.WriteLine("Rəqəm daxil etməlisiniz!");
                     select = Console.ReadLine();
                 }
+                #endregion
+                #region Menu select
                 switch (selectInt)
                 {
                     case 0:
@@ -152,9 +166,13 @@ namespace ConsoleProject
                     case 8:
                         GetSaleByNumber();
                         break;
+                    default:
+                        Console.WriteLine("Uygun reqem daxil edin");
+                        break;
 
                 }
 
+                #endregion
 
             } while (selectInt != 0);
         }
@@ -164,9 +182,9 @@ namespace ConsoleProject
         #region Product's Methods
         static void AddProduct()
         {
-            Console.WriteLine("Yeni satish daxil edin");
+            Console.WriteLine("=========Yeni mehsul daxil edin=========");
             Product product = new Product();
-         
+
             #region Name
             Console.WriteLine("Məhsul adı daxil edin :");
             product.ProductName = Console.ReadLine();
@@ -189,7 +207,7 @@ namespace ConsoleProject
             Console.WriteLine("Say daxil edin");
             string Count1 = Console.ReadLine();
             int Count2;
-            while(!int.TryParse(Count1, out Count2))
+            while (!int.TryParse(Count1, out Count2))
             {
                 Console.WriteLine("Duzgun say daxil edin");
                 Count1 = Console.ReadLine();
@@ -200,236 +218,336 @@ namespace ConsoleProject
             Console.WriteLine("Mehsulun kodunu daxil edin");
             product.ProductCode = Console.ReadLine();
             #endregion
-            #region Category
-            Console.WriteLine("Kateqoriya daxil edin");
-            Array array = Enum.GetValues(typeof(Category));
-            foreach (var item in array)
-            {
-                Console.Write(Array.IndexOf(array, item) + 1);
-                Console.WriteLine("-{0}", item);
-            }
+            #region Category        
+            Console.WriteLine("Sechmek istediyiniz kateqoriyanin qarshisindaki reqemi qeyd edin");
+                Array array = Enum.GetValues(typeof(Category));
+                foreach (var item in array)
+                {
+                    Console.Write(Array.IndexOf(array, item) + 1);
+                    Console.WriteLine("-{0}", item);
+                }
+                int Selection;
+                string Select = Console.ReadLine();
+                while (!int.TryParse(Select, out Selection))
+                {
+                    Console.WriteLine("Reqem daxil etmelisiniz");
+                    Select = Console.ReadLine();
+                }
+                switch (Selection)
+                {
+                    case 1:
+                        product.Category = Category.Ichkiler;
+                        break;
+                    case 2:
+                        product.Category = Category.Meyveler;
+                        break;
+                    case 3:
+                        product.Category = Category.Shokoladlar;
+                        break;
+                    case 4:
+                        product.Category = Category.Terevezler;
+                        break;
+                    case 5:
+                        product.Category = Category.UnMehsullari;
+                        break;
+                    case 6:
+                        product.Category = Category.Yaglar;
+                        break;
+                        default:
+                        Console.WriteLine("Bele bir kateqoriya yoxdur");
+                        AddProduct();
+                        break;
+                }
+            
 
 
-            int Selection = Convert.ToInt32(Console.ReadLine());
-
-
-
-            switch (Selection)
-            {
-                case 1:
-                    product.Category = Category.Ichkiler;
-                    break;
-                case 2:
-                    product.Category = Category.Meyveler;
-                    break;
-                case 3:
-                    product.Category = Category.Shokoladlar;
-                    break;
-                case 4:
-                    product.Category = Category.Terevezler;
-                    break;
-                case 5:
-                    product.Category = Category.UnMehsullari;
-                    break;
-                case 6:
-                    product.Category = Category.Yaglar;
-                    break;
-                default:
-                    Console.WriteLine("Sehv reqem daxil elemisiz tezden edin");
-                    AddProduct();
-                    break;
-
-            }
             #endregion
-            Console.WriteLine("Mehsul elave olundu");
+            marketableService.AddProduct(product);
+            Console.WriteLine("=========Mehsul elave olundu=========");
         }
         static void SearchProductByName()
         {
            Console.Write("Axtarish etmek istediyiniz mehsulun adini qeyd edin: ");
            string Text =  Console.ReadLine();          
            var list = marketableService.SearchProductByName(Text);
-
-            var table = new ConsoleTable("Mehsul", "Mehsulun adi", "Mehsulun Kodu", "Mehsulun sayi", "Mehsulun qiymeti", "Mehsulun Kateqoriyasi");
-            int i = 1;
-            foreach (var item in list)
+            if (list.Count == 0)
             {
-                _ = table.AddRow(i, item.ProductName, item.ProductCode, item.ProductCount, item.ProductPrice, item.Category);
-                i++;
+                Console.WriteLine("Bu adda mehsul yoxdur");
             }
+            else
+            {
+                var table = new ConsoleTable("Mehsul", "Mehsulun adi", "Mehsulun Kodu", "Mehsulun sayi", "Mehsulun qiymeti", "Mehsulun Kateqoriyasi");
+                int i = 1;
+                foreach (var item in list)
+                {
+                    _ = table.AddRow(i, item.ProductName, item.ProductCode, item.ProductCount, item.ProductPrice, item.Category);
+                    i++;
+                }
 
-            table.Write();
-        }
+                table.Write();
+            }
+                
+            
+        } 
         static void ChangeProduct()
         {
             Product product = new Product();
-            List<Product> productList = new List<Product>();
+            List<Product> productList = new List<Product>();           
             Console.WriteLine("Mehsulun kodunu daxil edin");
             string Code =  Console.ReadLine();
-            Console.WriteLine("Mehsulun yeni adini daxil edin");
-            string NewName = Console.ReadLine();
-            Console.WriteLine("Yeni qiymet daxil edin");
-            double NewPrice = Convert.ToDouble(Console.ReadLine());
-            Console.WriteLine("Yeni say daxil edin");
-            int NewCount = Convert.ToInt32(Console.ReadLine());
-            #region category
-            Console.WriteLine("Kateqoriya sechin");
-            Array array = Enum.GetValues(typeof(Category));
-            foreach (var item2 in array)
+            var list = marketableService.ChangeProduct(Code);
+            
+            if (list.Count == 0)
             {
-                Console.Write(Array.IndexOf(array, item2) + 1);
-                Console.WriteLine("-{0}", item2);
+               Console.WriteLine("Bu koda uygun mehsul yoxdur");
             }
-            int Selection = Convert.ToInt32(Console.ReadLine());
-        
-
-            switch (Selection)
+            else
             {
-                case 1:
-                    product.Category = Category.Ichkiler;
-                    break;
-                case 2:
-                    product.Category = Category.Meyveler;
-                    break;
-                case 3:
-                    product.Category = Category.Shokoladlar;
-                    break;
-                case 4:
-                    product.Category = Category.Terevezler;
-                    break;
-                case 5:
-                    product.Category = Category.UnMehsullari;
-                    break;
-                case 6:
-                    product.Category = Category.Yaglar;
-                    break;
-                default:
-                    Console.WriteLine("Kateqoriyanin qarshisindaki reqemi daxil edin");
-                    break;
-            }
+                #region Name
+                Console.WriteLine("Mehsulun yeni adini daxil edin");
+                string NewName = Console.ReadLine();
+                #endregion
+                #region Price
+                Console.WriteLine("Yeni qiymet daxil edin");
+                string Price = Console.ReadLine();
+                double NewPrice;
+               
+                while (!double.TryParse(Price, out NewPrice))
+                {
+                    Console.WriteLine("Duzgun qiymet daxil edin");
+                    Price = Console.ReadLine();
+                }
+                product.ProductPrice = NewPrice;
+                #endregion
+                #region Count
+                Console.WriteLine("Yeni say daxil edin");
+                string Count = Console.ReadLine();
+                int NewCount;
+                while (!int.TryParse(Count, out NewCount))
+                {
+                    Console.WriteLine("Duzgun say daxil edin");
+                    Count = Console.ReadLine();
+                }
+                #endregion
+                #region category
+                Console.WriteLine("Kateqoriya sechin");
+                Array array = Enum.GetValues(typeof(Category));
+                foreach (var item2 in array)
+                {
+                    Console.Write(Array.IndexOf(array, item2) + 1);
+                    Console.WriteLine("-{0}", item2);
+                }                
+                int Selection;
+                string Select = Console.ReadLine();
+                while (!int.TryParse(Select, out Selection))
+                {
+                    Console.WriteLine("Reqem daxil etmelisiniz");
+                    Select = Console.ReadLine();
+                }
+
+                switch (Selection)
+                {
+                    case 1:
+                        product.Category = Category.Ichkiler;
+                        break;
+                    case 2:
+                        product.Category = Category.Meyveler;
+                        break;
+                    case 3:
+                        product.Category = Category.Shokoladlar;
+                        break;
+                    case 4:
+                        product.Category = Category.Terevezler;
+                        break;
+                    case 5:
+                        product.Category = Category.UnMehsullari;
+                        break;
+                    case 6:
+                        product.Category = Category.Yaglar;
+                        break;
+                    default:
+                        Console.WriteLine("Kateqoriyanin qarshisindaki reqemi daxil edin");
+                        break;
+                }
 
 
-            #endregion
-            foreach (var item in productList)
-            {
-                item.ProductName = NewName;                
-                item.ProductPrice = NewPrice;                
-                item.ProductCount = NewCount;
-                item.Category = product.Category;
+                #endregion
+                foreach (var item in list)
+                {
+                    item.ProductName = NewName;
+                    item.ProductPrice = NewPrice;
+                    item.ProductCount = NewCount;
+                    item.Category = product.Category;
 
-            }
-
-            Console.WriteLine("Yeni mehsul elave olundu");
-
+                }
+                marketableService.ChangeProduct(Code);
+                Console.WriteLine("=======Mehsul deyishdirildi=======");
+            } 
         }
         static void RemoveProduct()
         {
-            List<Product> product = new List<Product>();
+                List<Product> product = new List<Product>();
             
                 Console.WriteLine("Silmek istediyiniz mehsulun kodunu yazin");
                 string text = Console.ReadLine();
+                //Console.WriteLine("Bu koda uygun mehsul yoxdur");
+            
                 marketableService.RemoveProduct(text);
+                Console.WriteLine("=======Mehsul silindi=======");
             
         }
         static void GetProductByAmountRange()
         {
             Console.WriteLine("Min mebleq daxil edin");
-            double minAmount = Convert.ToDouble(Console.ReadLine());
-            Console.WriteLine("Max mebleq daxil edin");
-            double maxAmount = Convert.ToDouble(Console.ReadLine());
-            var list = marketableService.GetProductByAmountRange(minAmount, maxAmount);
-            
-            var table = new ConsoleTable("Mehsul", "Mehsulun adi", "Mehsulun Kodu", "Mehsulun sayi", "Mehsulun qiymeti", "Mehsulun Kateqoriyasi");
-            int i = 1;
-            foreach (var item in list)
+            string Amount = Console.ReadLine();
+            double minAmount;
+            while(!double.TryParse(Amount, out minAmount))
             {
-                _ = table.AddRow(i, item.ProductName, item.ProductCode, item.ProductCount, item.ProductPrice, item.Category);
-                i++;
+                Console.WriteLine("Duzgun mebleg daxil edin");
+                Amount = Console.ReadLine();
             }
+            Console.WriteLine("Max mebleq daxil edin");
+            string Amount2 = Console.ReadLine();
+            double maxAmount;
+            while (!double.TryParse(Amount2, out maxAmount))
+            {
+                Console.WriteLine("Duzgun mebleg daxil edin");
+                Amount2 = Console.ReadLine();
+            }
+            if (maxAmount < minAmount)
+            {
+                Console.WriteLine("Max mebleg Min mebleqden boyuk olmalidir");
+            }
+            else
+            {
 
-            table.Write();
+                var list = marketableService.GetProductByAmountRange(minAmount, maxAmount);
+                if (list.Count == 0)
+                {
+                    Console.WriteLine("Mehsul yoxdur");
+                }
+                else
+                {
+                    var table = new ConsoleTable("Mehsul", "Mehsulun adi", "Mehsulun Kodu", "Mehsulun sayi", "Mehsulun qiymeti", "Mehsulun Kateqoriyasi");
+                    int i = 1;
+                    foreach (var item in list)
+                    {
+                        _ = table.AddRow(i, item.ProductName, item.ProductCode, item.ProductCount, item.ProductPrice, item.Category);
+                        i++;
+                    }
 
+                    table.Write();
+                }
+            }
         }
         static void ShowProduct()
         {
-            var table = new ConsoleTable("Mehsul", "Mehsulun adi", "Mehsulun Kodu", "Mehsulun sayi", "Mehsulun qiymeti", "Mehsulun Kateqoriyasi");
-            int i = 1;
-            foreach (var item in marketableService.Product)
+            List<Product> product = new List<Product>();
+            var list = marketableService.ShowProduct();
+            if (list.Count == 0)
             {
-                 table.AddRow(i, item.ProductName, item.ProductCode, item.ProductCount, item.ProductPrice, item.Category);
-                i++;
+                Console.WriteLine("Mehsul yoxdur");
             }
+            else
+            {
+                var table = new ConsoleTable("Mehsul", "Mehsulun adi", "Mehsulun Kodu", "Mehsulun sayi", "Mehsulun qiymeti", "Mehsulun Kateqoriyasi");
+                int i = 1;
+                foreach (var item in marketableService.Product)
+                {
+                    table.AddRow(i, item.ProductName, item.ProductCode, item.ProductCount, item.ProductPrice, item.Category);
+                    i++;
+                }
 
-            table.Write();
+                table.Write();
+            }
         }
         static void GetProductByCategory()
         {
-            
-            Console.WriteLine("1 - Ichkiler");
-            Console.WriteLine("2 - Meyveler");
-            Console.WriteLine("3 - Yaglar");
-            Console.WriteLine("4 - UnMehsullari");
-            Console.WriteLine("5 - Terevezler");
-            Console.WriteLine("6 - Shokoladlar");
-
-            Console.WriteLine("Seçimek istediyiniz kategoriyanin nomresini qeyd edin");
-            string select = Console.ReadLine();
             int selectInt;
-            Product product = new Product();
-            
-            while (!int.TryParse(select, out selectInt))
-            {
-                Console.WriteLine("Rəqəm daxil etməlisiniz!");
-                select = Console.ReadLine();
-            }
-            switch (selectInt)
-            {
-                case 1:
-                    product.Category = Category.Ichkiler;
-                break;
-                case 2:
-                    product.Category = Category.Meyveler;
-                    break;
-                case 3:
-                    product.Category = Category.Yaglar;
-                    break;
-                case 4:
-                    product.Category = Category.UnMehsullari;
-                    break;
-                case 5:
-                    product.Category = Category.Terevezler;
-                    break;
-                case 6:
-                    product.Category = Category.Shokoladlar;
-                    break;
-                default:
-                    Console.WriteLine("Sehv reqem daxil elemisiz tezden edin");
-                    AddProduct();
-                    break;
-            }
-            var list = marketableService.GetProductByCategory(product.Category);
-            var table = new ConsoleTable("Mehsul", "Mehsulun adi", "Mehsulun Kodu", "Mehsulun sayi", "Mehsulun qiymeti", "Mehsulun Kateqoriyasi");
-            int i = 1;
-            foreach (var item in list)
-            {
-                _ = table.AddRow(i, item.ProductName, item.ProductCode, item.ProductCount, item.ProductPrice, item.Category);
-                i++;
-            }
+             
+            #region menu
+            Console.WriteLine("Seçmek istediyiniz kategoriyanin nomresini qeyd edin");
 
-            table.Write();
+                Console.WriteLine("1 - Ichkiler");
+                Console.WriteLine("2 - Meyveler");
+                Console.WriteLine("3 - Yaglar");
+                Console.WriteLine("4 - UnMehsullari");
+                Console.WriteLine("5 - Terevezler");
+                Console.WriteLine("6 - Shokoladlar");
+                Console.WriteLine("0 - Geri qayitmaq");
+
+                string select = Console.ReadLine();
+
+                Product product = new Product();
+
+                while (!int.TryParse(select, out selectInt))
+                {
+                    Console.WriteLine("Rəqəm daxil etməlisiniz");
+                    select = Console.ReadLine();
+                }
+            #endregion
+            #region Menu Select
+            switch (selectInt)
+                {
+                    case 1:
+                        product.Category = Category.Ichkiler;
+                        break;
+                    case 2:
+                        product.Category = Category.Meyveler;
+                        break;
+                    case 3:
+                        product.Category = Category.Yaglar;
+                        break;
+                    case 4:
+                        product.Category = Category.UnMehsullari;
+                        break;
+                    case 5:
+                        product.Category = Category.Terevezler;
+                        break;
+                    case 6:
+                        product.Category = Category.Shokoladlar;
+                        break;
+                    case 0:
+                        break;
+                    default:
+                        Console.WriteLine("1-6 arasi reqem daxil edilmelidir");
+                        break;
+                }
+                if (selectInt >= 1 && selectInt <= 6)
+                {
+
+                    var list = marketableService.GetProductByCategory(product.Category);
+                    if (list.Count == 0)
+                    {
+                        Console.WriteLine("Bu kateqoriyaya uygun mehsul yoxdur");
+                    }
+                    else
+                    {
+                        var table = new ConsoleTable("Mehsul", "Mehsulun adi", "Mehsulun Kodu", "Mehsulun sayi", "Mehsulun qiymeti", "Mehsulun Kateqoriyasi");
+                        int i = 1;
+                        foreach (var item in list)
+                        {
+                            _ = table.AddRow(i, item.ProductName, item.ProductCode, item.ProductCount, item.ProductPrice, item.Category);
+                            i++;
+                        }
+
+                        table.Write();
+                    }
+                }
+            #endregion
             
-            
-        } 
+        }
         #endregion
 
         #region Sale's Methods
 
         static void AddSale()
         {
-            Console.WriteLine("Mehsulun kodunu daxil edin");
+            Console.WriteLine("Satishin kodunu daxil edin");
             string Code = Console.ReadLine();
-            Console.WriteLine("Mehsulun sayini qeyd edin");
+            Console.WriteLine("Satishin sayini qeyd edin");
             int Count = Convert.ToInt32(Console.ReadLine());
-            Console.WriteLine("Mehsulun nomresini qeyd edin");
+            Console.WriteLine("Satishin nomresini qeyd edin");
             int number = Convert.ToInt32(Console.ReadLine());
             marketableService.AddSale(Code, Count, number);
             

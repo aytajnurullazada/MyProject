@@ -44,7 +44,7 @@ namespace ConsoleProject.Infrustructure.Services
         {
             new Product
             {
-             ProductCode = "347gshs833",
+             ProductCode = "123",
              ProductCount = 4,
              ProductName = "Lays",
              ProductPrice = 1.2,
@@ -52,7 +52,7 @@ namespace ConsoleProject.Infrustructure.Services
             },
             new Product
         {
-            ProductCode = "4hr47re",
+            ProductCode = "124",
             ProductCount = 2,
             ProductName = "Nutella",
             ProductPrice = 2.3,
@@ -60,7 +60,7 @@ namespace ConsoleProject.Infrustructure.Services
         },
             new Product
         {
-            ProductCode = "768473adsw",
+            ProductCode = "125",
             ProductCount = 1,
             ProductName = "CocaCola",
             ProductPrice = 0.8,
@@ -124,10 +124,9 @@ namespace ConsoleProject.Infrustructure.Services
         }
 
         public List<Product> ChangeProduct(String Code)
-        {
-        
+        {      
             return _product.FindAll(p => p.ProductCode == Code).ToList();
-           
+
         }
 
         public List<Product> SearchProductByName(string Text)
@@ -145,13 +144,15 @@ namespace ConsoleProject.Infrustructure.Services
         public void RemoveProduct(string code)
         {
             List<Product> products = _product.ToList();
-           var res= products.Find(p => p.ProductCode == code);
-         _product.Remove(res);
+            var res = products.Find(p => p.ProductCode == code);
+            _product.Remove(res);
+            
         }
 
-        public void ShowProduct()
+        public List<Product> ShowProduct()
         {
            var list = _product.ToList();
+            return list;
         }
 
         public List<Product> GetProductByCategory(Category CategoryNumber)

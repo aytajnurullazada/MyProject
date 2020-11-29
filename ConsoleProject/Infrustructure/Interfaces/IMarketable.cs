@@ -25,6 +25,6 @@ namespace ConsoleProject.Infrustructure.Interfaces
         List <Product> GetProductByAmountRange(double MinAmount, double MaxAmount);
         List <Product> SearchProductByName(String Text);
         void RemoveProduct(string Code);
-        void ShowProduct();
+        List <Product> ShowProduct();
     }
 }
