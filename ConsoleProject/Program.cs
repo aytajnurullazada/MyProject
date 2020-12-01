@@ -146,7 +146,7 @@ namespace ConsoleProject
                         AddSale();
                         break;
                     case 2:
-                        Console.WriteLine("2");
+                        RemoveProductFromSale();
                         break;
                     case 3:
                         RemoveSale();
@@ -169,7 +169,6 @@ namespace ConsoleProject
                     default:
                         Console.WriteLine("Uygun reqem daxil edin");
                         break;
-
                 }
 
                 #endregion
@@ -390,11 +389,16 @@ namespace ConsoleProject
             
                 Console.WriteLine("Silmek istediyiniz mehsulun kodunu yazin");
                 string text = Console.ReadLine();
-                //Console.WriteLine("Bu koda uygun mehsul yoxdur");
-            
+                var list = marketableService.GetProductByCode(text);
+            if (list.Count == 0)
+            {
+                Console.WriteLine("Bu koda uygun mehsul yoxdur");
+            }
+            else
+            {
                 marketableService.RemoveProduct(text);
                 Console.WriteLine("=======Mehsul silindi=======");
-            
+            }
         }
         static void GetProductByAmountRange()
         {
@@ -568,6 +572,41 @@ namespace ConsoleProject
                 }
             }
              
+        }
+        static void RemoveProductFromSale()
+        {
+            Console.WriteLine("Satish no daxil edin");
+            string StringNumber = Console.ReadLine();
+            int Number;
+            while (!int.TryParse(StringNumber, out Number))
+            {
+                Console.WriteLine("Duzgun No daxil edin");
+                StringNumber = Console.ReadLine();
+            }
+            var list = marketableService.GetSaleByNumber(Number);
+            if (list.Count == 0)
+            {
+                Console.WriteLine("Bu nomrede satish yoxdur");
+            }
+            else
+            {
+                Console.WriteLine("Mehsul Kodunu daxil edin");
+                string Code = Console.ReadLine();
+                Console.WriteLine("");
+                Console.Write("Məhsulun sayını daxil edin");
+                string CountString = Console.ReadLine();
+                int Count;
+
+                while (!int.TryParse(CountString, out Count))
+                {
+
+                    Console.Write("Rəqəm daxil etməlisiniz");
+                    CountString = Console.ReadLine();
+
+                }            
+                marketableService.RemoveProductFromSale(Number, Code, Count);
+                Console.WriteLine("Mehsul satishdan silindi");
+            } 
         }
         static void RemoveSale()
         {

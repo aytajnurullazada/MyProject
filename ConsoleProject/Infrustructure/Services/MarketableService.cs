@@ -74,6 +74,8 @@ namespace ConsoleProject.Infrustructure.Services
         public List<Sales> Sales => _sales;
 
         #region Sales Method
+
+        //AddSale method - adding sale
         public void AddSale(string Code, int Count)
         {
             List<SaleItem> saleItems = new List<SaleItem>();
@@ -95,39 +97,79 @@ namespace ConsoleProject.Infrustructure.Services
             sale.SaleNumber = saleNumber;
             _sales.Add(sale);
         }
-        public void RemoveProductBySale(string Name, int Count)
+        // Remove Product From Sale
+        public void RemoveProductFromSale(int Number,string Code, int Count)
         {
-            
+            List<Sales> sales = _sales.ToList();
+            List<Product> products = _product.ToList();
+            var sale = sales.Find(s => s.SaleNumber == Number);
+            bool findNumber = sales.Exists(s => s.SaleNumber == Number);
+            if (findNumber == false)
+            {
+                Console.WriteLine("Bu nomrede satish yoxdur");
+            }
+            else
+            {
+                var list = products.Find(p => p.ProductCode == Code);
+                bool find = products.Exists(f => f.ProductCode == Code);
+                if (find == false)
+                {
+                    Console.WriteLine("Bu kodda mehsul yoxdur");
+                }
+                else
+                {
+                    if (sale.SaleAmount > list.ProductPrice * Count)
+                    {
+                        sale.SaleAmount -= list.ProductPrice * Count;
+                    }
+                    else if ((sale.SaleAmount == list.ProductPrice * Count))
+                    {
+
+                        Console.WriteLine("Satışdan məhsul geri qaytarıldı");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Mehsuldan bu qeder satilmayib");
+
+                    }
+                }
+            }
         }
+        //Remove Sale
         public void RemoveSale(int Number)
         {
             List<Sales> sales = _sales.ToList();
             var res = sales.Find(s => s.SaleNumber == Number);
             _sales.Remove(res);
             
-            
         }
+        //Show Total Sales
         public List<Sales> GetTotalSale()
         {
             var list = Sales.ToList();
             return list;
         }
+        //User add 2 date and show Total Sale
         public List<Sales> GetSaleByDateRange(DateTime StartDate, DateTime EndDate)
         {
             var list = _sales.Where(s => s.SaleDate >= StartDate && s.SaleDate <= EndDate).ToList();
             
             return list;
         }
+        //User add Sale Number and show total sale
         public List<Sales> GetSaleByNumber(int Number)
         {
             var list = Sales.Where(s => s.SaleNumber == Number).ToList();           
             return list;
         }
+        //User add 2 Amount and show total sale
         public List<Sales> GetSaleByAmountRange(double FirstAmount, double LastAmount)
         {
             var list = Sales.Where(s => s.SaleAmount >= FirstAmount && s.SaleAmount <= LastAmount).ToList();           
             return list;
         }
+
+        //User add date show total sale
         public List<Sales> GetSaleByDate(DateTime Date)
         {
             var list = _sales.Where(s => s.SaleDate == Date).ToList();         
@@ -136,45 +178,49 @@ namespace ConsoleProject.Infrustructure.Services
         #endregion
 
         #region Product method
+        //user add Product
         public void AddProduct(Product product)
         {
             _product.Add(product);
         }
-
+         //User can change product's informarion
         public List<Product> ChangeProduct(String Code)
         {      
             return _product.FindAll(p => p.ProductCode == Code).ToList();
 
         }
-
+        //user can search product by adding name
         public List<Product> SearchProductByName(string Text)
         {
             return  _product.FindAll(p => p.ProductName.Contains(Text)).ToList();
 
          }
 
+        //user add min and max amount and show total product
         public List<Product> GetProductByAmountRange(double MinAmount, double MaxAmount)
         {
             return _product.Where(p => p.ProductPrice >= MinAmount && p.ProductPrice <= MaxAmount).ToList();         
 
         }
-
+//user add product code and can remove product
         public void RemoveProduct(string code)
         {
             List<Product> products = _product.ToList();
             var res = products.Find(p => p.ProductCode == code);
             _product.Remove(res);           
         }
+        //Show all products
         public List<Product> ShowProduct()
         {
            var list = _product.ToList();
             return list;
         }
-
+//user select category and show products form this category
         public List<Product> GetProductByCategory(Category CategoryNumber)
         {
             return _product.Where(p => p.Category == CategoryNumber).ToList();
         }
+
         public List<Product> GetProductByCode(string Code)
         {
             List<Product> products = _product.Where(p => p.ProductCode == Code).ToList();

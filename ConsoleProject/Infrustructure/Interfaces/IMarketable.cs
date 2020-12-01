@@ -11,7 +11,7 @@ namespace ConsoleProject.Infrustructure.Interfaces
         //Sale's
         List<Sales> Sales { get; }      
         void AddSale(String Code, int Count);       
-        void RemoveProductBySale(string Name, int Count);
+        void RemoveProductFromSale(int Number,string Code, int Count);
         void RemoveSale(int Remove);
         List <Sales> GetTotalSale();
         List <Sales> GetSaleByDateRange(DateTime startDate, DateTime endDate);
