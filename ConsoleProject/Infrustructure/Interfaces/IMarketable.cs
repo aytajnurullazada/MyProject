@@ -10,9 +10,10 @@ namespace ConsoleProject.Infrustructure.Interfaces
     {
         //Sale's
         List<Sales> Sales { get; }      
-        void AddSale(String Code, int Count, int Number);       
+        void AddSale(String Code, int Count);       
         void RemoveProductBySale(string Name, int Count);
-        void GetTotalSale();
+        void RemoveSale(int Remove);
+        List <Sales> GetTotalSale();
         List <Sales> GetSaleByDateRange(DateTime startDate, DateTime endDate);
         List <Sales> GetSaleByDate(DateTime Date);
         List <Sales> GetSaleByAmountRange(double FirstAmount, double LastAmount);
@@ -26,5 +27,6 @@ namespace ConsoleProject.Infrustructure.Interfaces
         List <Product> SearchProductByName(String Text);
         void RemoveProduct(string Code);
         List <Product> ShowProduct();
+        List<Product> GetProductByCode(string Code);
     }
 }

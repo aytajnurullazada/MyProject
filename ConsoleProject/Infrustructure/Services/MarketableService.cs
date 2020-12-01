@@ -18,13 +18,13 @@ namespace ConsoleProject.Infrustructure.Services
                 {
                     SaleAmount = 23.4,
                     SaleDate = new DateTime(2020,09,09),
-                    SaleNumber = 5,
+                    SaleNumber = 1,
                    SaleItems=new List<SaleItem>()
                    {
                        new SaleItem
                        {
-                           ItemCount=2,
-                           ItemNumber=4,
+                           ItemCount=1,
+                           ItemNumber=1,
                              Product=new Product()
                            {
                                  ProductCount = 2,
@@ -74,25 +74,43 @@ namespace ConsoleProject.Infrustructure.Services
         public List<Sales> Sales => _sales;
 
         #region Sales Method
-        public void AddSale(string Code, int Count, int Number)
-        {                     
-            List<Product> products = new List<Product>();
-            Product product =  products.Find(p => p.ProductCode == Code);
+        public void AddSale(string Code, int Count)
+        {
             List<SaleItem> saleItems = new List<SaleItem>();
-            SaleItem saleItem = new SaleItem();
-            saleItem.Product = product;
+            double amount = 0;
+            var product = _product.Where(p => p.ProductCode == Code).FirstOrDefault();
+            var saleItem = new SaleItem();
+            var productCode = Code;
             saleItem.ItemCount = Count;
-            saleItem.ItemNumber = Number;
+            saleItem.Product = product;
+            saleItem.ItemNumber = saleItem.ItemCount + 1;
             saleItems.Add(saleItem);
-            List<Sales> sales = new List<Sales>();
-            
+            amount += Count * saleItem.Product.ProductPrice;
+            var saleNumber = Sales.Count + 1;
+            var saleDate = DateTime.Now;
+            var sale = new Sales();
+            sale.SaleAmount = amount;
+            sale.SaleDate = saleDate;
+            sale.SaleItems = saleItems;
+            sale.SaleNumber = saleNumber;
+            _sales.Add(sale);
         }
         public void RemoveProductBySale(string Name, int Count)
         {
             
         }
-        public void GetTotalSale()
-        {        
+        public void RemoveSale(int Number)
+        {
+            List<Sales> sales = _sales.ToList();
+            var res = sales.Find(s => s.SaleNumber == Number);
+            _sales.Remove(res);
+            
+            
+        }
+        public List<Sales> GetTotalSale()
+        {
+            var list = Sales.ToList();
+            return list;
         }
         public List<Sales> GetSaleByDateRange(DateTime StartDate, DateTime EndDate)
         {
@@ -114,7 +132,7 @@ namespace ConsoleProject.Infrustructure.Services
         {
             var list = _sales.Where(s => s.SaleDate == Date).ToList();         
             return list;
-        }
+        }      
         #endregion
 
         #region Product method
@@ -145,10 +163,8 @@ namespace ConsoleProject.Infrustructure.Services
         {
             List<Product> products = _product.ToList();
             var res = products.Find(p => p.ProductCode == code);
-            _product.Remove(res);
-            
+            _product.Remove(res);           
         }
-
         public List<Product> ShowProduct()
         {
            var list = _product.ToList();
@@ -158,9 +174,15 @@ namespace ConsoleProject.Infrustructure.Services
         public List<Product> GetProductByCategory(Category CategoryNumber)
         {
             return _product.Where(p => p.Category == CategoryNumber).ToList();
-            
         }
+        public List<Product> GetProductByCode(string Code)
+        {
+            List<Product> products = _product.Where(p => p.ProductCode == Code).ToList();
+            return products;
+        }
+
         #endregion
+
     }
 }
 

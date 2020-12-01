@@ -149,7 +149,7 @@ namespace ConsoleProject
                         Console.WriteLine("2");
                         break;
                     case 3:
-                        Console.WriteLine("3");
+                        RemoveSale();
                         break;
                     case 4:
                         ShowSale();
@@ -543,95 +543,208 @@ namespace ConsoleProject
 
         static void AddSale()
         {
-            Console.WriteLine("Satishin kodunu daxil edin");
-            string Code = Console.ReadLine();
-            Console.WriteLine("Satishin sayini qeyd edin");
-            int Count = Convert.ToInt32(Console.ReadLine());
-            Console.WriteLine("Satishin nomresini qeyd edin");
-            int number = Convert.ToInt32(Console.ReadLine());
-            marketableService.AddSale(Code, Count, number);
+            Product product = new Product();
+            List<Product> _product = new List<Product>();
+            {
+                Console.WriteLine("Mehsulun kodunu daxil edin");
+                string Code = Console.ReadLine();
+                Console.WriteLine("Mehsulun sayini daxil edin");
+                string count1 = Console.ReadLine();
+                int count;
+                while (!int.TryParse(count1, out count))
+                {
+                    Console.WriteLine("duzgun say daxil edin");
+                    count1 = Console.ReadLine();
+                }
+                var list = marketableService.GetProductByCode(Code);
+                if (list.Count == 0)
+                {
+                    Console.WriteLine("Bu kodda mehsul yoxdur");
+                }
+                else
+                {
+                    Console.WriteLine("Mehsul ugurla elave olundu");
+                    marketableService.AddSale(Code, count);
+                }
+            }
+             
+        }
+        static void RemoveSale()
+        {
+            Console.WriteLine("Silmek istediyiniz satishin nomresini daxil edin");
+            string NumberString = Console.ReadLine();
+            int Number;
+            while (!int.TryParse(NumberString, out Number))
+            {
+                Console.WriteLine("No daxil etmelisiniz");
+                NumberString = Console.ReadLine();
+            }
+            var list = marketableService.GetSaleByNumber(Number);
+            if (list.Count == 0)
+            {
+                Console.WriteLine("Bu No-de satish yoxdur");
+            }
+            else
+            {
+                marketableService.RemoveSale(Number);
+                Console.WriteLine("Satish ugurla silindi");
+            }
             
         }
         static void ShowSale()
         {
-            marketableService.GetTotalSale();
+            
+            var list = marketableService.GetTotalSale();
             var table = new ConsoleTable("Satish" , "Satish Meblegi", "Satish Tarixi", "Satish sayi", "Satish Nomresi" );
             int i = 1;
-            foreach (var item in marketableService.Sales)
+            if (list.Count == 0)
             {
-                _ = table.AddRow(i, item.SaleAmount, item.SaleDate.ToString("dd.MM.yyyy"), item.SaleItems.Count, item.SaleNumber);
-                i++;
+                Console.WriteLine("Satish yoxdur");
             }
+            else { 
+                foreach (var item in list)
+                {
+                    _ = table.AddRow(i, item.SaleAmount, item.SaleDate.ToString("dd.MM.yyyy"), item.SaleItems.Count, item.SaleNumber);
+                    i++;
+                }
 
-            table.Write();
-
+                table.Write();
+            }
         }
         static void GetSaleByDateRange()
         {
-            Console.WriteLine("Bashlangic tarixi qeyd edin");
-            DateTime StartDate = Convert.ToDateTime( Console.ReadLine());
-            Console.WriteLine("Bitish tarixini qeyd edin");
-            DateTime EndDate = Convert.ToDateTime(Console.ReadLine());
+            Console.WriteLine("Bashlangic tarixi qeyd edin (il.ay.gun)");
+            string date1 = Console.ReadLine();
+            DateTime StartDate;
+            while(!DateTime.TryParse(date1, out StartDate))
+            {
+                Console.WriteLine("tarixi duzgun daxil edin");
+                date1 = Console.ReadLine();
+            }
+            Console.WriteLine("Bitish tarixi qeyd edin (il.ay.gun)");
+            string date2 = Console.ReadLine();
+            DateTime EndDate;
+            while (!DateTime.TryParse(date2, out EndDate))
+            {
+                Console.WriteLine("tarixi duzgun daxil edin");
+                date2 = Console.ReadLine();
+            }
             var table = new ConsoleTable("Satish", "Satish Meblegi", "Satish Tarixi", "Satish sayi", "Satish Nomresi");
             int i = 1;
             var list = marketableService.GetSaleByDateRange(StartDate, EndDate);
-            foreach (var item in list)
+            if (list.Count == 0)
             {
-                table.AddRow(i, item.SaleAmount, item.SaleDate.ToString("dd.MM.yyyy"), item.SaleItems.Count, item.SaleNumber);
-                i++;
+                Console.WriteLine("Bu tarix araliginda satish yoxdur");
             }
+            else
+            {
+                foreach (var item in list)
+                {
+                    table.AddRow(i, item.SaleAmount, item.SaleDate.ToString("dd.MM.yyyy"), item.SaleItems.Count, item.SaleNumber);
+                    i++;
+                }
 
-            table.Write();          
+                table.Write();
+            }
         }
         static void GetSaleByAmountRange()
         {
             Console.WriteLine("1-ci meblegi sechin");
-            double FirstAmount = Convert.ToDouble(Console.ReadLine());
-            Console.WriteLine("2-ci meblegi sechin");
-            double LastAmount = Convert.ToDouble(Console.ReadLine());
-            var table = new ConsoleTable("Satish", "Satish Meblegi", "Satish Tarixi", "Satish sayi", "Satish Nomresi");
-            int i = 1;
-            var list = marketableService.GetSaleByAmountRange(FirstAmount, LastAmount);
-            foreach (var item in list)
+            string amount1 = Console.ReadLine();
+            double FirstAmount;
+            while (!double.TryParse(amount1, out FirstAmount))
             {
-                _ = table.AddRow(i, item.SaleAmount, item.SaleDate.ToString("dd.MM.yyyy"), item.SaleItems.Count, item.SaleNumber);
-                i++;
+                Console.WriteLine("duzgun mebleg daxil edin");
+                amount1 = Console.ReadLine();
             }
+            Console.WriteLine("2-ci meblegi sechin");
+            string amount2 = Console.ReadLine();
+            double LastAmount;
+            while (!double.TryParse(amount2, out LastAmount))
+            {
+                Console.WriteLine("duzgun mebleg daxil edin");
+                amount2 = Console.ReadLine();
+            }
+            if (FirstAmount > LastAmount)
+            {
+                Console.WriteLine("1-ci mebleg 2-ci meblegden boyuk olmalidir");
+            }
+            else
+            {
+                var table = new ConsoleTable("Satish", "Satish Meblegi", "Satish Tarixi", "Satish sayi", "Satish Nomresi");
+                int i = 1;
+                var list = marketableService.GetSaleByAmountRange(FirstAmount, LastAmount);
+                if (list.Count == 0)
+                {
+                    Console.WriteLine("Bu meblegler arasinda satish yoxdur");
+                }
+                else
+                {
+                    foreach (var item in list)
+                    {
+                        _ = table.AddRow(i, item.SaleAmount, item.SaleDate.ToString("dd.MM.yyyy"), item.SaleItems.Count, item.SaleNumber);
+                        i++;
+                    }
 
-            table.Write();
-            
+                    table.Write();
+                }
+            }
         }
         static void GetSaleByDate()
         {
-            Console.WriteLine("Tarix qeyd edin");
-            DateTime date = Convert.ToDateTime(Console.ReadLine());
-            List<Sales> result = marketableService.GetSaleByDate(date);
-            var table = new ConsoleTable("Satish", "Satish Meblegi", "Satish Tarixi", "Satish sayi", "Satish Nomresi");
-            int i = 1;
-            var list = marketableService.GetSaleByDate(date);
-            foreach (var item in list)
+            Console.WriteLine("Tarix daxil edin (il.ay.gun)");
+            string date2 = Console.ReadLine();
+            DateTime date;
+            while(!DateTime.TryParse(date2, out date))
             {
-                _ = table.AddRow(i, item.SaleAmount, item.SaleDate.ToString("dd.MM.yyyy"), item.SaleItems.Count, item.SaleNumber);
-                i++;
+                Console.WriteLine("duzgun tarix qeyd edin");
+                date2 = Console.ReadLine();
             }
-            table.Write();
-            
+            var list = marketableService.GetSaleByDate(date);
+            if (list.Count == 0)
+            {
+                Console.WriteLine("Bu tarixde satish yoxdur");
+            }
+            else
+            {
+                var table = new ConsoleTable("Satish", "Satish Meblegi", "Satish Tarixi", "Satish sayi", "Satish Nomresi");
+                int i = 1;
+                foreach (var item in list)
+                {
+                    _ = table.AddRow(i, item.SaleAmount, item.SaleDate.ToString("dd.MM.yyyy"), item.SaleItems.Count, item.SaleNumber);
+                    i++;
+                }
+                table.Write();
+            }
         }
         static void GetSaleByNumber()
         {
             Console.WriteLine("Nomre daxil edin");
-            int Number = Convert.ToInt32(Console.ReadLine());
-            List<Sales> result = marketableService.GetSaleByNumber(Number);
-            var table = new ConsoleTable("Satish", "Satish Meblegi", "Satish Tarixi", "Satish sayi", "Satish Nomresi");
-            int i = 1;
-            var list = marketableService.GetSaleByNumber(Number);
-            foreach (var item in list)
+            string StringNumber = Console.ReadLine();
+            int Number;
+            while(!int.TryParse(StringNumber, out Number))
             {
-                _ = table.AddRow(i, item.SaleAmount, item.SaleDate.ToString("dd.MM.yyyy"), item.SaleItems.Count, item.SaleNumber);
-                i++;
+                Console.WriteLine("Duzgun No daxil edin");
+                StringNumber = Console.ReadLine();
             }
+            var list = marketableService.GetSaleByNumber(Number);
+            if (list.Count == 0)
+            {
+                Console.WriteLine("Bu nomrede satish yoxdur");
+            }
+            else
+            {
+                var table = new ConsoleTable("Satish", "Satish Meblegi", "Satish Tarixi", "Satish sayi", "Satish Nomresi");
+                int i = 1;
 
-            table.Write();
+                foreach (var item in list)
+                {
+                    _ = table.AddRow(i, item.SaleAmount, item.SaleDate.ToString("dd.MM.yyyy"), item.SaleItems.Count, item.SaleNumber);
+                    i++;
+                }
+
+                table.Write();
+            }
         }
         #endregion
 
